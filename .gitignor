@@ -1,0 +1,5 @@
+__pycache__/
+venv/
+start_chrome.bat
+tracks.csv
+test.py
