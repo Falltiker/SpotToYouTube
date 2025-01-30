@@ -4,20 +4,17 @@ import time
 import csv
 
 
-def main():
+def main(url):
 
     file_name = "tracks.csv"
 
     url = "https://open.spotify.com/collection/tracks"
-    # url = "https://open.spotify.com/playlist/4XXrJznjDZhlTZ5dfwYf6X?si=28b89d670aba40b9"
 
     # Создаем веб-драйвер
     driver = create_driver(False)
 
     # Логинимся, если будем парсить любимые треки
     if url == "https://open.spotify.com/collection/tracks":
-        login = "ckbopec@gmail.com"
-        password = "FAltiker666SKIF"
 
         driver.get("https://accounts.spotify.com/ru/login")
 
@@ -100,4 +97,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main("https://open.spotify.com/collection/tracks")

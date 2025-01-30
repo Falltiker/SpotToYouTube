@@ -7,14 +7,15 @@ __pycache__/
 *.pyo
 *.pyd
 
-# Personal files and configurations
-start_chrome.bat
-tracks.csv
-test.py
-
 # Ignore log files
 *.log
 
 # Ignore IDE settings
 .vscode/
 .idea/
+
+# Personal files and configurations
+start_chrome.bat
+tracks.csv
+test.py
+user data/
