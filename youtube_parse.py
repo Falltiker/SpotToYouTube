@@ -13,11 +13,6 @@ options = Options()
 
 driver = webdriver.Chrome(options=options)
 
-stealth(
-    driver,
-    platform="Win32",
-    fix_hairline=True
-)
 
 
 

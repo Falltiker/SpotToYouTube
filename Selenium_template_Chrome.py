@@ -18,6 +18,7 @@ import time
 import os
 
 
+
 # Создаем драйвер
 def create_driver(headless=True, defence=True, start_maximized=False, log_lvl=3, download_image=False, webnotifications=True, use_stealth=True):
     options = Options()
@@ -173,11 +174,17 @@ def create_driver_in_bat(
     return driver
 
 
+
+
+
 # Поиск элемента с ожиданием
 def find_element(driver, by, value, timeout=5):
     return WebDriverWait(driver, timeout).until(
         EC.presence_of_element_located((by, value))
     )
+
+
+
 
 
 # Клик с движение мыши
@@ -191,6 +198,9 @@ def move_to_element_click(driver, element, click=True):
     actions.move_to_element(element).perform()
     if click:
         actions.click().perform()
+
+
+
 
 
 # Прокрутка к элементу или в конец страницы
