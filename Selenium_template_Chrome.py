@@ -15,81 +15,30 @@ import subprocess
 import random
 import socket
 import time
+import shutil
 import os
 
 
 
-# Создаем драйвер
-def create_driver(headless=True, defence=True, start_maximized=False, log_lvl=3, download_image=False, webnotifications=True, use_stealth=True):
-    options = Options()
 
-    if headless:
-        options.add_argument("--headless=new")
-        options.add_argument("--disable-gpu") 
-
-    # Уровень логов
-    if log_lvl == 0:
-        pass
-    elif log_lvl == 1:
-        options.add_argument("--log_lvl-level=1")  # Показываются только ошибки
-    elif log_lvl == 2:
-        options.add_argument("--log_lvl-level=2")  # Ошибки и предупреждения
-    elif log_lvl == 3:
-        options.add_argument("--log_lvl-level=3")  # Только критические ошибки
-
-    if start_maximized:
-        options.add_argument("--start-maximized")
-
-    if not download_image:
-        prefs = {"profile.default_content_setting_values": {"images": 2}}
-        options.add_experimental_option("prefs", prefs)
-
-    if webnotifications:
-        prefs = {
-            "profile.default_content_setting_values.notifications": 2,
-            "profile.managed_default_content_settings.notifications": 2
-        }
-        options.add_experimental_option("prefs", prefs)
-
-    if defence:
-        options.add_argument("--disable-blink-features=AutomationControlled")
-        options.add_experimental_option("excludeSwitches", ["enable-automation"])
-        options.add_argument("--disable-extensions")
-        options.add_argument("--disable-infobars")
-
-    driver = webdriver.Chrome(options=options)
-
-    driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
-
-    # if use_stealth:
-    #     stealth(
-    #         driver,
-    #         platform="Win32",
-    #         fix_hairline=True
-    #     )
-
-    return driver
-
-
-
-
-def create_driver_in_bat(
+def create_driver(
     headless=False,
     defence=True,
     chrome_path = r'"C:\Program Files\Google\Chrome\Application\chrome.exe"',
-    start_maximized=True,
+    start_maximized=False,
     log_lvl=3,
     download_image=True,
     webnotifications=False,
     use_stealth=True,
     port=9222,
     user_data_dir=None,
-    profile_dir=None
+    profile=None
 ):
     """Создает драйвер для Chrome с заданными параметрами."""
 
     if not os.path.exists(chrome_path.replace('"', '')):
-        raise FileNotFoundError(f"Неверный путь к Chrome: {chrome_path}. Укажите путь к браузеру Google Chrome")
+        raise FileNotFoundError(f"Неверный путь к Chrome: {chrome_path}. \nУкажите путь к браузеру Google Chrome")
+    
 
     def check_port(port, host="127.0.0.1"):
         """Проверяет, свободен ли порт."""
@@ -109,7 +58,7 @@ def create_driver_in_bat(
         return port
 
 
-    def create_chrome_bat(port, user_data_dir, profile_dir, headless, defence, start_maximized, log_lvl, download_image, webnotifications):
+    def create_chrome_bat(port, user_data_dir, profile, headless, defence, start_maximized, log_lvl, download_image, webnotifications):
         """Создает бат-файл для запуска Chrome."""
 
         # Базовая строка для батника
@@ -119,8 +68,8 @@ def create_driver_in_bat(
         if user_data_dir:
             bat_content += f'  --user-data-dir="{user_data_dir}"'
 
-        if profile_dir:
-            bat_content += f' --profile-directory="{profile_dir}"'
+        if profile:
+            bat_content += f' --profile-directory="{profile}"'
 
         if headless:
             bat_content += " --headless --disable-gpu --disable-dev-shm-usage"
@@ -129,11 +78,11 @@ def create_driver_in_bat(
             bat_content += " --start-maximized"
 
         if log_lvl == 1:
-            bat_content += " --log_lvl-level=1"  # Только ошибки
+            bat_content += " --log-level=1"  # Только ошибки
         elif log_lvl == 2:
-            bat_content += " --log_lvl-level=2"  # Ошибки и предупреждения
+            bat_content += " --log-level=2"  # Ошибки и предупреждения
         elif log_lvl == 3:
-            bat_content += " --log_lvl-level=3"  # Критические ошибки
+            bat_content += " --log-level=3"  # Критические ошибки
         else:
             pass
 
@@ -155,7 +104,7 @@ def create_driver_in_bat(
 
     port = find_free_port(start_port=port)
 
-    bat_file = create_chrome_bat(port, user_data_dir, profile_dir, headless, defence, start_maximized, log_lvl, download_image, webnotifications)
+    bat_file = create_chrome_bat(port, user_data_dir, profile, headless, defence, start_maximized, log_lvl, download_image, webnotifications)
     subprocess.Popen([bat_file], shell=True)
     time.sleep(5)
 
